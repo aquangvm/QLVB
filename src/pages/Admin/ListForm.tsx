@@ -132,7 +132,7 @@ const ListForm = () => {
       setStatusCallBC(false);
     } catch (error) {
       console.log(error)
-      toast.error('lỗi');
+      toast.error('không tìm thấy');
       setStatusCallBC(false);
     }
   };

@@ -43,9 +43,9 @@ const Manage = () => {
       const tokenId = await createNFT(contract,studentId, dipId, IpfsHash);
       console.log(tokenId);
 
-      toast.success('tao đã thêm 1 thằng vào bản ghi blockchain nhé !');
+      toast.success('Lưu trữ thành công');
     } catch (e) {
-      toast.error('tao không thêm 1 thằng vào bản ghi blockchain nhé !');
+      toast.error('Lưu trữ thất bại');
     } finally {
       setLoading(false);
     }

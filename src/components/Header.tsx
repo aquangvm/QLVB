@@ -55,8 +55,8 @@ const Header = () => {
           </Grid>
           <Grid item xs={4}>
             <TitleLayout>
-              <Title1>BAN CƠ YẾU CHÍNH PHỦ</Title1>
-              <Title2>HỌC VIỆN KỸ THUẬT MẬT MÃ</Title2>
+              <Title1>ĐẠI HỌC</Title1>
+              <Title2>BÁCH KHOA HÀ NỘI</Title2>
               <Title3>TRANG QUẢN LÝ VĂN BẰNG</Title3>
             </TitleLayout>
           </Grid>

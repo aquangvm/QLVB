@@ -318,6 +318,11 @@
 			},
 			{
 				"internalType": "string",
+				"name": "xeploai",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
 				"name": "nftCID",
 				"type": "string"
 			}
@@ -397,6 +402,11 @@
 			},
 			{
 				"internalType": "string",
+				"name": "xeploai",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
 				"name": "nftCID",
 				"type": "string"
 			}
@@ -431,6 +441,11 @@
 			},
 			{
 				"internalType": "string",
+				"name": "xeploai",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
 				"name": "nftCID",
 				"type": "string"
 			}
@@ -461,6 +476,11 @@
 			{
 				"internalType": "string",
 				"name": "dipId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "xeploai",
 				"type": "string"
 			},
 			{

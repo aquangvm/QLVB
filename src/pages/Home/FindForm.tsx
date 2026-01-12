@@ -9,7 +9,8 @@ import {
   findByStudenId,
   getUriById,
   removeNFT,
-  findByDipId
+  findByDipId,
+  getDiplomaDataByTokenId
 } from '../../utils/contract';
 import { getIpfsUrl } from '../../utils/ipfs';
 import { BigNumber } from 'ethers';
@@ -43,7 +44,8 @@ const FindForm = () => {
     {
       title: 'Số hiệu',
       dataIndex: 'dipId',
-      key: 'dipId'
+      key: 'dipId',
+      render: (text: any) => text != null ? String(text) : ''
     },
     {
       title: 'Tên sinh viên',
@@ -98,13 +100,16 @@ const FindForm = () => {
       for (let i = 0; i < tokens.length; i++) {
         const element = tokens[i];
 
-
         const data = await axios.get("https://magenta-repulsive-beetle-354.mypinata.cloud/ipfs/" + element.uri)
-
-
-
-
-        arr.push({ ...data.data, id: element.id })  
+        
+        // Lấy dipId từ contract để đảm bảo luôn có giá trị
+        const contractData = await getDiplomaDataByTokenId(contract, element.id);
+        
+        arr.push({ 
+          ...data.data, 
+          id: element.id,
+          dipId: contractData.dipId || data.data.dipId || ''
+        })  
 
       }
 

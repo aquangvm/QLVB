@@ -24,9 +24,12 @@ export const createNFT = async (
   contract: Contract,
   studentId: string,
   dipId: string,
+  xeploai: string,
+  dateOfBirth: string,
+  yearIssued: string,
   tokenCid: string
 ): Promise<BigNumber> => {
-  const tx = await contract.createNFT(studentId, dipId, tokenCid);
+  const tx = await contract.createNFT(studentId, dipId, xeploai, dateOfBirth, yearIssued, tokenCid);
   const wait = await tx.wait();
   const { events } = wait;
   const event = events.find((e: any) => e.event === 'CreateNFTEvent');
@@ -53,9 +56,19 @@ export const findByStudenId = async (
 };
 
 export const getUriById = async (contract: Contract, tokenId: string) => contract.tokenURI(tokenId);
-// export const getUriById = async (
-//   contract: Contract,
-//   tokenId: string
-// ): Promise<BigNumber[]> => {
-//   return await contract.tokenURI(tokenId);
-// };
+
+export const getDiplomaDataByTokenId = async (contract: Contract, tokenId: string) => {
+  return await contract.listDataDipWithTokenId(tokenId);
+};
+
+export const findByXeploai = async (contract: Contract, xeploai: string): Promise<BigNumber[]> => {
+  return await contract.searchXeploai(xeploai);
+};
+
+export const findByDateOfBirth = async (contract: Contract, dateOfBirth: string): Promise<BigNumber[]> => {
+  return await contract.searchDateOfBirth(dateOfBirth);
+};
+
+export const findByYearIssued = async (contract: Contract, yearIssued: string): Promise<BigNumber[]> => {
+  return await contract.searchYearIssued(yearIssued);
+};

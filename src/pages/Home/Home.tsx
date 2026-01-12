@@ -6,6 +6,9 @@ import { LockOutlined } from '@ant-design/icons';
 import ListForm from './ListForm';
 import FindForm from './FindForm';
 import ManageForm from '../Admin/ManageForm';
+import SearchByXeploai from './SearchByXeploai';
+import SearchByDateOfBirth from './SearchByDateOfBirth';
+import SearchByYearIssued from './SearchByYearIssued';
 import Grid from '@mui/material/Grid';
 import { Box, Container } from '@mui/system';
 
@@ -13,7 +16,7 @@ const { TabPane } = Tabs;
 
 const ContentLayout = styled.div``;
 
-type TabName = 'list' | 'find' | 'manage';
+type TabName = 'list' | 'find' | 'xeploai' | 'dateOfBirth' | 'yearIssued';
 
 const Home = () => {
   const [selectedTab, setSelectedTab] = useState<TabName>('list');
@@ -44,11 +47,17 @@ const Home = () => {
                   >
                     <TabPane key={'list'} tab={<span>Tìm kiếm theo mã sinh viên</span>} />
                     <TabPane key={'find'} tab={<span>Tìm kiếm theo số hiệu văn bằng</span>} />
+                    <TabPane key={'xeploai'} tab={<span>Tìm kiếm theo xếp loại</span>} />
+                    <TabPane key={'dateOfBirth'} tab={<span>Tìm kiếm theo ngày tháng năm sinh</span>} />
+                    <TabPane key={'yearIssued'} tab={<span>Tìm kiếm theo năm cấp văn bằng</span>} />
                   </Tabs>
 
                   <div>
                     {selectedTab === 'list' && <ListForm />}
                     {selectedTab === 'find' && <FindForm />}
+                    {selectedTab === 'xeploai' && <SearchByXeploai />}
+                    {selectedTab === 'dateOfBirth' && <SearchByDateOfBirth />}
+                    {selectedTab === 'yearIssued' && <SearchByYearIssued />}
                   </div>
                 </Card>
               </ContentLayout>

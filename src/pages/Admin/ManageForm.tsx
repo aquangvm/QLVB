@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Button, DatePicker, Form, Input, Upload } from 'antd';
+import { Button, DatePicker, Form, Input, Upload, Select } from 'antd';
 import styled from 'styled-components';
 import { LockOutlined } from '@ant-design/icons';
 import { pinFileToIpfs, pinObject } from '../../utils/ipfs';
 import { connectMetamask, createNFT } from '../../utils/contract';
 import { toast } from 'react-toastify';
 import { CircularProgress } from '@mui/material';
+import moment from 'moment';
 
 const Layout = styled.div`
   padding-top: 0.5rem;
@@ -15,6 +16,9 @@ type FormValues = {
   dipId: string;
   name: string;
   studentId: string;
+  xeploai: string;
+  dateOfBirth: any;
+  yearIssued: string;
   createdAt: Date;
   ipfsHash: string;
 };
@@ -29,18 +33,22 @@ const Manage = () => {
       const contract = await connectMetamask();
       
 
-      const { dipId, name, studentId, createdAt, ipfsHash } = values;
+      const { dipId, name, studentId, xeploai, dateOfBirth, yearIssued, createdAt, ipfsHash } = values;
+      const dateOfBirthFormatted = moment(dateOfBirth).format('YYYY-MM-DD');
       const dip = {
         dipId: parseInt(dipId),
         name,
         studentId,
+        xeploai,
+        dateOfBirth: dateOfBirthFormatted,
+        yearIssued,
         createdAt: createdAt.toISOString(),
         ipfsHash
       };
       const res = await pinObject(JSON.stringify(dip));
       const { IpfsHash } = res.data;
       console.log(1)
-      const tokenId = await createNFT(contract,studentId, dipId, IpfsHash);
+      const tokenId = await createNFT(contract, studentId, dipId, xeploai, dateOfBirthFormatted, yearIssued, IpfsHash);
       console.log(tokenId);
 
       toast.success('Lưu trữ thành công');
@@ -75,11 +83,41 @@ const Manage = () => {
         </Form.Item>
 
         <Form.Item
+          label="Xếp loại"
+          name="xeploai"
+          rules={[{ required: true, message: 'Vui lòng nhập xếp loại!' }]}
+        >
+          <Select placeholder="Chọn xếp loại">
+            <Select.Option value="Xuất sắc">Xuất sắc</Select.Option>
+            <Select.Option value="Giỏi">Giỏi</Select.Option>
+            <Select.Option value="Khá">Khá</Select.Option>
+            <Select.Option value="Trung bình">Trung bình</Select.Option>
+            <Select.Option value="Trung bình khá">Trung bình khá</Select.Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          label="Ngày tháng năm sinh"
+          name="dateOfBirth"
+          rules={[{ required: true, message: 'Vui lòng chọn ngày tháng năm sinh!' }]}
+        >
+          <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
+        </Form.Item>
+
+        <Form.Item
+          label="Năm cấp văn bằng"
+          name="yearIssued"
+          rules={[{ required: true, message: 'Vui lòng nhập năm cấp văn bằng!' }]}
+        >
+          <Input placeholder="Ví dụ: 2024" />
+        </Form.Item>
+
+        <Form.Item
           label="Ngày cấp"
           name="createdAt"
           rules={[{ required: true, message: 'Vui lòng nhập số hiệu văn bằng!' }]}
         >
-          <DatePicker />
+          <DatePicker style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item label="File" name="ipfsHash" hidden>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Form, Input, Table } from 'antd';
 import styled from 'styled-components';
 import { UserOutlined } from '@ant-design/icons';
-import { connectMetamask, findByStudenId, getUriById, removeNFT } from '../../utils/contract';
+import { connectMetamask, findByStudenId, getUriById, removeNFT, getDiplomaDataByTokenId } from '../../utils/contract';
 import { getIpfsUrl } from '../../utils/ipfs';
 import { BigNumber } from 'ethers';
 import { toast } from 'react-toastify';
@@ -32,7 +32,8 @@ const ListForm = () => {
     {
       title: 'Số hiệu',
       dataIndex: 'dipId',
-      key: 'dipId'
+      key: 'dipId',
+      render: (text: any) => text != null ? String(text) : ''
     },
     {
       title: 'Tên sinh viên',
@@ -104,11 +105,15 @@ const ListForm = () => {
 
 
         const data = await axios.get("https://magenta-repulsive-beetle-354.mypinata.cloud/ipfs/" + element.uri)
-
-
-
-
-        arr.push({ ...data.data, id: element.id })  
+        
+        // Lấy dipId từ contract để đảm bảo luôn có giá trị
+        const contractData = await getDiplomaDataByTokenId(contract, element.id);
+        
+        arr.push({ 
+          ...data.data, 
+          id: element.id,
+          dipId: contractData.dipId || data.data.dipId || ''
+        })  
 
       }
 

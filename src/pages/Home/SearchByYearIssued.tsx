@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { Button, Form, Input, Table } from 'antd';
 import styled from 'styled-components';
-import { UserOutlined } from '@ant-design/icons';
-import { connectMetamask, findByStudenId, getUriById, removeNFT, getDiplomaDataByTokenId } from '../../utils/contract';
+import { FileSearchOutlined } from '@ant-design/icons';
+
+import {
+  connectMetamask,
+  getUriById,
+  findByYearIssued,
+  getDiplomaDataByTokenId
+} from '../../utils/contract';
 import { getIpfsUrl } from '../../utils/ipfs';
 import { BigNumber } from 'ethers';
+import { Box, CircularProgress } from '@mui/material';
 import { toast } from 'react-toastify';
-import { CircularProgress } from '@mui/material';
-import { Box } from '@mui/system';
 import moment from 'moment';
 import axios from 'axios';
 
@@ -15,17 +20,19 @@ const Layout = styled.div`
   padding-top: 0.5rem;
 `;
 
-const UserIcon = styled(UserOutlined)`
+const InputIcon = styled(FileSearchOutlined)`
   opacity: 0.5;
 `;
 
 type FormValues = {
-  studentId: string;
+  yearIssued: string;
 };
 
-const ListForm = () => {
+const SearchByYearIssued = () => {
   const [form] = Form.useForm<FormValues>();
+
   const [diplomas, setDiplomas] = useState<any[]>([]);
+
   const [statusCallBC, setStatusCallBC] = useState<boolean>(false);
 
   const columns = [
@@ -41,9 +48,9 @@ const ListForm = () => {
       key: 'name'
     },
     {
-      title: 'Xếp loại',
-      dataIndex: 'xeploai',
-      key: 'xeploai'
+      title: 'Năm cấp văn bằng',
+      dataIndex: 'yearIssued',
+      key: 'yearIssued'
     },
     {
       title: 'Ngày cấp',
@@ -60,24 +67,6 @@ const ListForm = () => {
           Download
         </a>
       )
-    },
-    {
-      title: 'Quản lý',
-      render: (text: any, record: any) => (
-        <Button
-          type="link"
-          danger
-          onClick={async () => {
-            console.log(record);
-            const { id, studentId, dipId, ipfsHash } = record;
-            const contract = await connectMetamask();
-            await removeNFT(contract, BigNumber.from(id));
-            console.log(id);
-          }}
-        >
-          Thu hồi
-        </Button>
-      )
     }
   ];
 
@@ -85,11 +74,12 @@ const ListForm = () => {
     setStatusCallBC(true);
     try {
       const contract = await connectMetamask();
-      const { studentId } = values;
-      const ids = await findByStudenId(contract, studentId);
 
-      const newArray = [BigNumber.from(ids).toString()];
+      const { yearIssued } = values;
 
+      const ids = await findByYearIssued(contract, yearIssued);
+
+      const newArray = ids.map((id: BigNumber) => id.toString());
 
       const tokens = await Promise.all(
         newArray.map(async (id) => ({
@@ -98,24 +88,10 @@ const ListForm = () => {
         }))
       );
 
-
-
-
-
-      // const dips = await Promise.all(
-      //   tokens.map(async ({ id, uri }) => ({
-      //     id,
-      //     ...(await fetch(uri).then((res) =>  res.json()))
-      //   }))
-      // );
-
-      // example : http://......com
-
       let arr: any[] = []
 
       for (let i = 0; i < tokens.length; i++) {
         const element = tokens[i];
-
 
         const data = await axios.get("https://magenta-repulsive-beetle-354.mypinata.cloud/ipfs/" + element.uri)
         
@@ -133,16 +109,12 @@ const ListForm = () => {
       const dips = await Promise.all(
         arr
       );
-
-
-      // console.log(dips)
-
       setDiplomas(dips);
-      toast.success('thành công');
+
       setStatusCallBC(false);
+      toast.success('thành công');
     } catch (error) {
-      console.log(error)
-      toast.error('không tìm thấy');
+      toast.error('lỗi');
       setStatusCallBC(false);
     }
   };
@@ -150,12 +122,12 @@ const ListForm = () => {
   return (
     <Layout>
       <Form form={form} layout={'vertical'} onFinish={onFinish}>
-        <Form.Item label="Mã sinh viên" required={true} name={'studentId'}>
-          <Input prefix={<UserIcon />} placeholder="Nhập mã sinh viên" />
+        <Form.Item label="Năm cấp văn bằng" required={true} name={'yearIssued'}>
+          <Input prefix={<InputIcon />} placeholder="Nhập năm cấp văn bằng (ví dụ: 2024)" />
         </Form.Item>
         <div style={{ textAlign: 'center' }}>
           <Form.Item>
-            <Button type="primary" htmlType={'submit'} danger>
+            <Button type="primary" htmlType={'submit'}>
               Tìm kiếm
             </Button>
           </Form.Item>
@@ -167,9 +139,10 @@ const ListForm = () => {
           <CircularProgress color="error" />
         </Box>
       )}
+
       {!statusCallBC && <Table columns={columns} dataSource={diplomas} />}
     </Layout>
   );
 };
 
-export default ListForm;
+export default SearchByYearIssued;
